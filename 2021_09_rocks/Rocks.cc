@@ -1,4 +1,5 @@
 #include <iostream>
+#include <random>
 
 /*
  * Игра "Камни"
@@ -17,6 +18,24 @@
 
 int main()
 {
-	std::cout << "Игра \"Камни\"" << std::endl;
+	int decision;
+	std::cout << "Игра \"Камни\"\n\n"
+			"Правила:\n"
+			"1. Имеется куча из N камней.\n"
+			"2. 2 игрока (пользователь и компьютер) по очереди берут 1, 2 или 3 камня из этой кучи.\n"
+			"3. Проигрывает тот, кто взял камень последним.\n\n"
+			"Начать игру? (1/0)"
+			<< std::endl;
+	std::cin >> decision;
+	if(decision==1)
+	{
+		//загадываем количество камней N
+		std::default_random_engine rnd;
+		std::random_device rdev;
+		rnd.seed(rdev());
+		std::uniform_int_distribution<>N{1,20};
+		int num=N(rnd);
+		std::cout << "Количество камней в куче: " << num;
+	}
 	return 0;
 }
