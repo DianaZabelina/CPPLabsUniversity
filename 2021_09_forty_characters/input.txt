@@ -1,0 +1,3 @@
+This     is
+an example of a text file which should be printed to a console while keeping a line length under 40 characters.
+So we should check the total length and insert line breaks as appropriate.
