@@ -79,7 +79,7 @@ void write_file(const char *filename, std::vector<Employee> &list) {
 	data_file.close();
 }
 
-void input_employee(std::vector<Employee> &list){
+void input_employee(std::vector<Employee> &list) {
 	Employee empl;
 	std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 	std::cout << "Введите имя сотрудника: ";
@@ -94,7 +94,7 @@ void input_employee(std::vector<Employee> &list){
 	list.push_back(empl);
 }
 
-void change_employee(std::vector<Employee> &list){
+void change_employee(std::vector<Employee> &list) {
 	std::cout << "Введите номер записи: ";
 	//size_type - беззнаковое целое число, поэтому нужно исключить отрицательное значение int
 	unsigned int n;
@@ -120,8 +120,16 @@ void change_employee(std::vector<Employee> &list){
 	}
 }
 
-void delete_employee(std::vector<Employee> &list){
-	//list.erase(list.begin() + num)
+void delete_employee(std::vector<Employee> &list) {
+	std::cout << "Введите номер записи: ";
+	unsigned int n;
+	std::cin >> n;
+	if (n >= list.size()) {
+		std::cout << "Записи под таким номером нет." << std::endl;
+	}
+	else {
+		list.erase(list.begin() + n);
+	}
 }
 
 int main() {
