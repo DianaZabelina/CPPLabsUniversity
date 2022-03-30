@@ -95,7 +95,29 @@ void input_employee(std::vector<Employee> &list){
 }
 
 void change_employee(std::vector<Employee> &list){
+	std::cout << "Введите номер записи: ";
+	//size_type - беззнаковое целое число, поэтому нужно исключить отрицательное значение int
+	unsigned int n;
+	std::cin >> n;
+	if (n >= list.size()) {
+		std::cout << "Записи под таким номером нет." << std::endl;
+	}
+	else {
+		list.erase(list.begin() + n);
 
+		Employee empl;
+		std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		std::cout << "Введите имя сотрудника: ";
+		std::cin.getline(empl.name, sizeof(empl.name));
+
+		std::cout << "Введите должность     : ";
+		std::cin.getline(empl.job, sizeof(empl.job));
+
+		std::cout << "Введите зарплату      : ";
+		std::cin >> empl.salary;
+
+		list.emplace(list.begin()+n, empl);
+	}
 }
 
 void delete_employee(std::vector<Employee> &list){
