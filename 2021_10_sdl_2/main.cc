@@ -13,6 +13,11 @@
  * std::shared_ptr
  * std::unique_ptr
  * std::weak_ptr
+ *
+ * Основной цикл программы:
+ *		1) Обработка событий, состояния ввода и т.п.
+ *		2) Изменение состояния программы
+ *		3) Отображение текущего состояния
  */
 
 #include <iostream>
@@ -24,7 +29,7 @@
 #include <SDL2/SDL_main.h>
 
 const int WINDOW_HEIGHT = 600;
-const int WINDOW_WIDTH = 800;
+const int WINDOW_WIDTH = 600;
 
 std::shared_ptr<SDL_Window> window;
 std::shared_ptr<SDL_Renderer> renderer;
@@ -75,17 +80,25 @@ void render() {
 	}
 }
 
+void main_loop() {
+	SDL_Event event;
+	for (;;) {
+		//	1) Обработка событий, состояния ввода и т.п.
+		while (SDL_PollEvent(&event)) {
+			if (event.type == SDL_QUIT)
+				exit(0);
+		}
+		//	2) Изменение состояния программы
+		//	3) Отображение текущего состояния
+		render();
+		SDL_RenderPresent(renderer.get());
+	}
+}
+
 int main(int, char**) {
 	SDL_Init(SDL_INIT_EVERYTHING);
-
 	create_window();
 	create_renderer();
-
-	render();
-
-	SDL_RenderPresent(renderer.get());
-	SDL_Delay(3'000); /*задержка окна*/
-	SDL_DestroyRenderer(renderer.get());
-
+	main_loop();
 	return 0;
 }
