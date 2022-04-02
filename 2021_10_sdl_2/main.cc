@@ -75,8 +75,11 @@ void create_renderer() {
 void render() {
 	SDL_SetRenderDrawColor(renderer.get(), 31, 63, 95, 255);
 	SDL_RenderClear(renderer.get());
-	SDL_SetRenderDrawColor(renderer.get(), 255, 255, 255, 255);
+
+	//белый
+	//SDL_SetRenderDrawColor(renderer.get(), 255, 255, 255, 255);
 	for (int i = 0; i <= 50; i++) {
+		SDL_SetRenderDrawColor(renderer.get(), 255 - 5 * i, 5 * i, 255, 255);
 		SDL_RenderDrawLine(renderer.get(),
 				100 + i * 8, 100,
 				100, 500 - i * 8);
@@ -85,21 +88,43 @@ void render() {
 				500, 100 + i * 8);
 	}
 
+	//красный
 	SDL_SetRenderDrawColor(renderer.get(), 255, 63, 63, 255);
 	SDL_RenderFillRect(renderer.get(), &rect1);
 
+	//зелёный
 	SDL_SetRenderDrawColor(renderer.get(), 63, 255, 63, 255);
-		SDL_RenderFillRect(renderer.get(), &rect2);
+
+	//жёлтый при пересечении прямоугольников
+	SDL_Rect r;
+	if (SDL_IntersectRect(&rect1, &rect2, &r))
+		SDL_SetRenderDrawColor(renderer.get(), 255, 255, 63, 255);
+	SDL_RenderFillRect(renderer.get(), &rect2);
 }
 
 void main_loop() {
+	auto keys = SDL_GetKeyboardState(nullptr);
+
 	SDL_Event event;
 	for (;;) {
 		//	1) Обработка событий, состояния ввода и т.п.
 		while (SDL_PollEvent(&event)) {
 			if (event.type == SDL_QUIT)
 				return;
+			if (event.type == SDL_KEYDOWN) {
+				switch (event.key.keysym.scancode) {
+				case SDL_SCANCODE_ESCAPE:
+					return;
+				default:
+					;
+				}
+			}
 		}
+		if (keys[SDL_SCANCODE_RIGHT]) rect2.x += 2;
+		if (keys[SDL_SCANCODE_LEFT])  rect2.x -= 2;
+		if (keys[SDL_SCANCODE_DOWN])  rect2.y += 2;
+		if (keys[SDL_SCANCODE_UP])    rect2.y -= 2;
+
 		//	2) Изменение состояния программы
 		rect1.x += rect1_dx;
 		rect1.y += rect1_dy;
@@ -107,6 +132,7 @@ void main_loop() {
 		if (rect1.x + rect1.w >= WINDOW_WIDTH)	rect1_dx = -1;
 		if (rect1.y <= 0)						rect1_dy =  1;
 		if (rect1.y + rect1.h >= WINDOW_HEIGHT)	rect1_dy = -1;
+
 		//	3) Отображение текущего состояния
 		render();
 		SDL_RenderPresent(renderer.get());
