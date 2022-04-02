@@ -31,8 +31,14 @@
 const int WINDOW_HEIGHT = 600;
 const int WINDOW_WIDTH = 800;
 
-std::shared_ptr<SDL_Window> window;
-std::shared_ptr<SDL_Renderer> renderer;
+struct Window {
+	std::shared_ptr<SDL_Window> window;
+	std::shared_ptr<SDL_Renderer> renderer;
+
+	void create();
+	void render();
+	void main_loop();
+};
 
 SDL_Rect rect1 { 50, 50, 15, 15 };
 int rect1_dx = 1, rect1_dy = 1;
@@ -41,31 +47,29 @@ SDL_Rect rect2 { 685, 485, 15, 15 };
 SDL_Rect border1 { 10, 10, 780, 580 };
 SDL_Rect border2 { 12, 12, 776, 576 };
 
-void create_window() {
+void Window::create() {
 	window = std::shared_ptr<SDL_Window>(
-			SDL_CreateWindow("SDL Window", /*название*/
-					SDL_WINDOWPOS_CENTERED,
-					SDL_WINDOWPOS_CENTERED, /*расположение верхнего левого угла*/
-					WINDOW_WIDTH,
-					WINDOW_HEIGHT,
-					SDL_WINDOW_SHOWN),
-			SDL_DestroyWindow);
+					SDL_CreateWindow("SDL Window", /*название*/
+							SDL_WINDOWPOS_CENTERED,
+							SDL_WINDOWPOS_CENTERED, /*расположение верхнего левого угла*/
+							WINDOW_WIDTH,
+							WINDOW_HEIGHT,
+							SDL_WINDOW_SHOWN),
+					SDL_DestroyWindow);
 	if (window == nullptr) { //окно не создалось
 		std::cerr <<
 				"Не могу создать окно: " <<
 				SDL_GetError() << std::endl;
 		exit(1);
 	}
-}
 
-void create_renderer() {
 	//окно успешно создалось
 	renderer = std::shared_ptr<SDL_Renderer>(
-			SDL_CreateRenderer(
-					window.get(), -1,
-					SDL_RENDERER_ACCELERATED |
-					SDL_RENDERER_PRESENTVSYNC),
-			SDL_DestroyRenderer);
+				SDL_CreateRenderer(
+						window.get(), -1,
+						SDL_RENDERER_ACCELERATED |
+						SDL_RENDERER_PRESENTVSYNC),
+				SDL_DestroyRenderer);
 	if (renderer == nullptr) { //рендерер не создался
 		std::cerr <<
 				"Не могу создать рендерер: " <<
@@ -74,17 +78,17 @@ void create_renderer() {
 	}
 }
 
-void render() {
+void Window::render() {
+	//бирюзовый
 	SDL_SetRenderDrawColor(renderer.get(), 31, 63, 95, 255);
 	SDL_RenderClear(renderer.get());
-
 	//белый
 	SDL_SetRenderDrawColor(renderer.get(), 255, 255, 255, 255);
 	SDL_RenderFillRect(renderer.get(), &border1);
-
+	//бирюзовый
 	SDL_SetRenderDrawColor(renderer.get(), 31, 63, 95, 255);
 	SDL_RenderFillRect(renderer.get(), &border2);
-
+	//фигура
 	for (int i = 0; i <= 50; i++) {
 		SDL_SetRenderDrawColor(renderer.get(), 255 - 5 * i, 5 * i, 255, 255);
 		SDL_RenderDrawLine(renderer.get(),
@@ -94,14 +98,11 @@ void render() {
 				500 - i * 8, 500,
 				500, 100 + i * 8);
 	}
-
 	//красный
 	SDL_SetRenderDrawColor(renderer.get(), 255, 63, 63, 255);
 	SDL_RenderFillRect(renderer.get(), &rect1);
-
 	//зелёный
 	SDL_SetRenderDrawColor(renderer.get(), 63, 255, 63, 255);
-
 	//жёлтый при пересечении прямоугольников
 	SDL_Rect r;
 	if (SDL_IntersectRect(&rect1, &rect2, &r))
@@ -109,7 +110,7 @@ void render() {
 	SDL_RenderFillRect(renderer.get(), &rect2);
 }
 
-void main_loop() {
+void Window::main_loop() {
 	auto keys = SDL_GetKeyboardState(nullptr);
 
 	SDL_Event event;
@@ -148,11 +149,11 @@ void main_loop() {
 }
 
 int main(int, char**) {
+	Window window1;
 	std::cout << "Program started!" << std::endl;
 	SDL_Init(SDL_INIT_EVERYTHING);
-	create_window();
-	create_renderer();
-	main_loop();
+	window1.create();
+	window1.main_loop();
 	std::cout << "Program ended!" << std::endl;
 	return 0;
 }
