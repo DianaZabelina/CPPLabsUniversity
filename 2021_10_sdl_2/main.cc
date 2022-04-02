@@ -29,10 +29,15 @@
 #include <SDL2/SDL_main.h>
 
 const int WINDOW_HEIGHT = 600;
-const int WINDOW_WIDTH = 600;
+const int WINDOW_WIDTH = 800;
 
 std::shared_ptr<SDL_Window> window;
 std::shared_ptr<SDL_Renderer> renderer;
+
+SDL_Rect rect1 { 50, 50, 15, 15 };
+int rect1_dx = 1, rect1_dy = 1;
+
+SDL_Rect rect2 { 685, 485, 15, 15 };
 
 void create_window() {
 	window = std::shared_ptr<SDL_Window>(
@@ -56,7 +61,8 @@ void create_renderer() {
 	renderer = std::shared_ptr<SDL_Renderer>(
 			SDL_CreateRenderer(
 					window.get(), -1,
-					SDL_RENDERER_ACCELERATED),
+					SDL_RENDERER_ACCELERATED |
+					SDL_RENDERER_PRESENTVSYNC),
 			SDL_DestroyRenderer);
 	if (renderer == nullptr) { //рендерер не создался
 		std::cerr <<
@@ -78,6 +84,12 @@ void render() {
 				500 - i * 8, 500,
 				500, 100 + i * 8);
 	}
+
+	SDL_SetRenderDrawColor(renderer.get(), 255, 63, 63, 255);
+	SDL_RenderFillRect(renderer.get(), &rect1);
+
+	SDL_SetRenderDrawColor(renderer.get(), 63, 255, 63, 255);
+		SDL_RenderFillRect(renderer.get(), &rect2);
 }
 
 void main_loop() {
@@ -86,9 +98,15 @@ void main_loop() {
 		//	1) Обработка событий, состояния ввода и т.п.
 		while (SDL_PollEvent(&event)) {
 			if (event.type == SDL_QUIT)
-				exit(0);
+				return;
 		}
 		//	2) Изменение состояния программы
+		rect1.x += rect1_dx;
+		rect1.y += rect1_dy;
+		if (rect1.x <= 0)						rect1_dx =  1;
+		if (rect1.x + rect1.w >= WINDOW_WIDTH)	rect1_dx = -1;
+		if (rect1.y <= 0)						rect1_dy =  1;
+		if (rect1.y + rect1.h >= WINDOW_HEIGHT)	rect1_dy = -1;
 		//	3) Отображение текущего состояния
 		render();
 		SDL_RenderPresent(renderer.get());
@@ -96,9 +114,11 @@ void main_loop() {
 }
 
 int main(int, char**) {
+	std::cout << "Program started!" << std::endl;
 	SDL_Init(SDL_INIT_EVERYTHING);
 	create_window();
 	create_renderer();
 	main_loop();
+	std::cout << "Program ended!" << std::endl;
 	return 0;
 }
