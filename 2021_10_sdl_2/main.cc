@@ -38,6 +38,8 @@ SDL_Rect rect1 { 50, 50, 15, 15 };
 int rect1_dx = 1, rect1_dy = 1;
 
 SDL_Rect rect2 { 685, 485, 15, 15 };
+SDL_Rect border1 { 10, 10, 780, 580 };
+SDL_Rect border2 { 12, 12, 776, 576 };
 
 void create_window() {
 	window = std::shared_ptr<SDL_Window>(
@@ -77,7 +79,12 @@ void render() {
 	SDL_RenderClear(renderer.get());
 
 	//белый
-	//SDL_SetRenderDrawColor(renderer.get(), 255, 255, 255, 255);
+	SDL_SetRenderDrawColor(renderer.get(), 255, 255, 255, 255);
+	SDL_RenderFillRect(renderer.get(), &border1);
+
+	SDL_SetRenderDrawColor(renderer.get(), 31, 63, 95, 255);
+	SDL_RenderFillRect(renderer.get(), &border2);
+
 	for (int i = 0; i <= 50; i++) {
 		SDL_SetRenderDrawColor(renderer.get(), 255 - 5 * i, 5 * i, 255, 255);
 		SDL_RenderDrawLine(renderer.get(),
@@ -120,10 +127,11 @@ void main_loop() {
 				}
 			}
 		}
-		if (keys[SDL_SCANCODE_RIGHT]) rect2.x += 2;
-		if (keys[SDL_SCANCODE_LEFT])  rect2.x -= 2;
-		if (keys[SDL_SCANCODE_DOWN])  rect2.y += 2;
-		if (keys[SDL_SCANCODE_UP])    rect2.y -= 2;
+
+		if (rect2.x < border2.w and keys[SDL_SCANCODE_RIGHT]) rect2.x += 2;
+		if (rect2.x > border2.x and keys[SDL_SCANCODE_LEFT])  rect2.x -= 2;
+		if (rect2.y < border2.h and keys[SDL_SCANCODE_DOWN])  rect2.y += 2;
+		if (rect2.y > border2.y and keys[SDL_SCANCODE_UP])    rect2.y -= 2;
 
 		//	2) Изменение состояния программы
 		rect1.x += rect1_dx;
