@@ -48,7 +48,7 @@
 int main(int, char**) {
 	WindowWithRectangles window1;
 	//std::shared_ptr<Window> w;
-	// = std::make_shared<Window>();
+	//w = std::make_shared<Window>();
 
 	std::cout << "Program started!" << std::endl;
 	SDL_Init(SDL_INIT_EVERYTHING);
