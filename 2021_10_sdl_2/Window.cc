@@ -49,6 +49,7 @@ void Window::main_loop() {
 					;
 				}
 			}
+			handle_event(event);
 		}
 		handle_keys(keys);
 

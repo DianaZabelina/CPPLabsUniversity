@@ -16,6 +16,7 @@ public:
 	//деструктор
 	virtual ~Window() {}
 
+	virtual void handle_event(const SDL_Event &event) {}
 	virtual void handle_keys(const Uint8 *keys) {}
 	virtual void update() {}
 	virtual void render() {}
