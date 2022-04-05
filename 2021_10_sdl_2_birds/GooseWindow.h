@@ -10,7 +10,15 @@ private:
 	Texture _goose;
 	Texture _cloud;
 
-	double x, y, phase;
+	double phase[5];
+
+	SDL_FRect geese[5] {
+			{ 50.0, 0.0, 64.0, 64.0 },
+			{ 50.0, 25.0, 64.0, 64.0 },
+			{ 50.0, 50.0, 64.0, 64.0 },
+			{ 50.0, 75.0, 64.0, 64.0 },
+			{ 50.0, 100.0, 64.0, 64.0 }
+	};
 
 	SDL_FRect clouds[6] {
 			{128.0, 200.0, 128.0, 64.0},

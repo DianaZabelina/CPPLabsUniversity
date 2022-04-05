@@ -6,9 +6,8 @@ GooseWindow::GooseWindow()
   _cloud(_renderer, "cloud.png")
 {
 	SDL_SetWindowTitle(_window.get(), "Some evil birds window o_O");
-	x = 50.0;
-	y = 0.0;
-	phase = 0.0;
+	for (unsigned i = 0; i < 5; i++)
+		phase[i] = 0.0;
 }
 
 void GooseWindow::render()
@@ -16,10 +15,18 @@ void GooseWindow::render()
 	//небо
 	SDL_SetRenderDrawColor(_renderer.get(), 63, 192, 255, 255);
 	SDL_RenderClear(_renderer.get());
-	for (unsigned i = 0; i < 6; i++)
+	//облака вдали
+	for (unsigned i = 0; i < 3; i++)
 		_cloud.draw(clouds[i]);
-	_goose.draw(x, y, (sin(phase) + cos(phase)) / 2 * 180 / 3.1415);
+	//гуси
 	//_goose.draw(x, y, phase*20);
+	//_goose.draw(x, y, (sin(phase) + cos(phase)) / 2 * 180 / 3.1415);
+	for (unsigned i = 0; i < 5; i++) {
+		_goose.draw(geese[i].x, geese[i].y, (sin(phase[i]) + cos(phase[i])) / 2 * 180 / 3.1415);
+	}
+	//облака вблизи
+	for (unsigned i = 3; i < 6; i++)
+			_cloud.draw(clouds[i]);
 }
 
 void GooseWindow::handle_keys(const Uint8 *keys)
@@ -37,11 +44,16 @@ void GooseWindow::handle_keys(const Uint8 *keys)
 void GooseWindow::update()
 {
 	auto pi = acos(-1.0);
-	phase += pi / 90.0;
-	x += 4;
-	if (x >= width())
-		x = -_goose.width();
-	y = height() / 2 * (1 + 0.3 * sin(phase)) - height() / 4;
+	for (unsigned i = 0; i < 5; i++) {
+		phase[i] += pi * (i - 0.6) / 90.0;
+		geese[i].x += 4 * (i + 0.5);
+		if (geese[i].x >= width())
+			geese[i].x = -geese[i].w;
+		if (i < 1)
+			geese[i].y = height() / 2 * (1 + 0.3 * sin(phase[i])) - height() / 4;
+		else
+			geese[i].y = height() / 2 * (1 + 0.3 * (i - 0.6) * sin(phase[i])) - height() / 4;
+	}
 
 	for (unsigned i = 0; i < 6; i++) {
 		clouds[i].x -= clouds[i].w / 32;

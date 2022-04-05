@@ -22,8 +22,6 @@ void Texture::draw(int x, int y, int w, int h)
 {
 	SDL_Rect target { x, y, w, h };
 	SDL_RenderCopy(ren(), tex(), nullptr, &target);
-
-
 }
 
 void Texture::draw(double x, double y, double angle)
