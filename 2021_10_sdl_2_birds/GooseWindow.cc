@@ -2,19 +2,23 @@
 #include <cmath>
 
 GooseWindow::GooseWindow()
-: _goose(_renderer, "goose.png"),
+: Window(GOOSE_WINDOW_WIDTH, GOOSE_WINDOW_HEIGHT),
+  _goose(_renderer, "goose.png"),
   _cloud(_renderer, "cloud.png"),
   _eagle(_renderer, "eagle.png"),
   _bg(_renderer, "bg.png"),
-  _sun(_renderer, "sun.png")
+  _sun(_renderer, "sun.png"),
+  _mountains(_renderer, "mountains.png", 2.0),
+  _forest(_renderer, "forest.png", 4.0),
+  _river(_renderer, "river.png", 10.0)
 {
 	SDL_SetWindowTitle(_window.get(), "Some evil birds window o_O");
 	for (unsigned i = 0; i < 5; i++)
 		phase[i] = 0.0;
 	eagle_x = 50.0;
 	eagle_y = 300.0;
-	sun_x = 0;
-	sun_y = 50;
+	sun_x = width();
+	sun_y = 50.0;
 }
 
 void GooseWindow::render()
@@ -22,10 +26,16 @@ void GooseWindow::render()
 	//небо
 	SDL_SetRenderDrawColor(_renderer.get(), 63, 192, 255, 255);
 	SDL_RenderClear(_renderer.get());
-	//солнце
-	_sun.draw(sun_x, sun_y);
 	//фон
 	_bg.draw(0, 0);
+	//солнце
+	_sun.draw(sun_x, sun_y);
+	//горы
+	_mountains.draw(0, 250, width(), _mountains.height());
+	//лес
+	_forest.draw(0, 300, width(), _forest.height());
+	//река
+	_river.draw(0, 500, width(), _river.height());
 	//облака вдали
 	for (unsigned i = 0; i < 3; i++)
 		_cloud.draw(clouds[i]);
@@ -57,9 +67,9 @@ void GooseWindow::handle_keys(const Uint8 *keys)
 
 void GooseWindow::update()
 {
-	sun_x += 1.0;
-	if (sun_x >= width())
-		sun_x = 10.0;
+	sun_x -= 0.6;
+	if (sun_x <= -50.0)
+		sun_x = width();
 
 	auto pi = acos(-1.0);
 	for (unsigned i = 0; i < 5; i++) {
@@ -78,4 +88,8 @@ void GooseWindow::update()
 		if (clouds[i].x <= -clouds[i].w)
 			clouds[i].x = width();
 	}
+
+	_mountains.update();
+	_forest.update();
+	_river.update();
 }

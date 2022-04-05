@@ -3,6 +3,7 @@
 
 #include "Window.h"
 #include "Texture.h"
+#include "LayerTexture.h"
 
 class GooseWindow final: public Window
 {
@@ -12,15 +13,21 @@ private:
 	Texture _eagle;
 	Texture _bg;
 	Texture _sun;
+	LayerTexture _mountains;
+	LayerTexture _forest;
+	LayerTexture _river;
+
+	static constexpr int GOOSE_WINDOW_WIDTH = 800;
+	static constexpr int GOOSE_WINDOW_HEIGHT = 600;
 
 	double phase[5];
 
 	SDL_FRect geese[5] {
-			{ 50.0, 0.0, 64.0, 64.0 },
-			{ 50.0, 25.0, 64.0, 64.0 },
+			{ 50.0, 0.0, 44.0, 44.0 },
+			{ 50.0, 25.0, 54.0, 54.0 },
 			{ 50.0, 50.0, 64.0, 64.0 },
-			{ 50.0, 75.0, 64.0, 64.0 },
-			{ 50.0, 100.0, 64.0, 64.0 }
+			{ 50.0, 75.0, 74.0, 74.0 },
+			{ 50.0, 100.0, 84.0, 84.0 }
 	};
 
 	SDL_FRect clouds[6] {
