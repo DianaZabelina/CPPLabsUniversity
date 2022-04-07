@@ -12,6 +12,9 @@ private:
 		   WINDOW_HEIGHT = 720;
 	std::shared_ptr<Map> _map;
 	Player _player;
+
+	void draw_minimap(Uint8 alpha);
+
 public:
 	MazeWindow();
 	virtual ~MazeWindow() = default;

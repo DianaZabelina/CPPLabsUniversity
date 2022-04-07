@@ -5,15 +5,17 @@ MazeWindow::MazeWindow()
 	SDL_SetWindowTitle(_window.get(), "Maze Window");
 	_map = std::make_shared<Map>("map.txt");
 	_player.spawn(_map);
+
+	SDL_SetRenderDrawBlendMode(_renderer.get(), SDL_BLENDMODE_BLEND);
 }
 
-void MazeWindow::render() {
+void MazeWindow::draw_minimap(Uint8 alpha) {
 	for (int row = 0; row < _map->height(); row++) {
 		for (int col = 0; col < _map->width(); col++) {
 			if (_map->is_wall(col, row))
-				SDL_SetRenderDrawColor(_renderer.get(), 255, 255, 255, 255);
+				SDL_SetRenderDrawColor(_renderer.get(), 255, 255, 255, alpha);
 			else
-				SDL_SetRenderDrawColor(_renderer.get(), 100, 100, 100, 255);
+				SDL_SetRenderDrawColor(_renderer.get(), 100, 100, 100, alpha);
 
 			SDL_Rect cell_rect { col * 20, row * 20, 20, 20 };
 			SDL_RenderFillRect(_renderer.get(), &cell_rect);
@@ -27,14 +29,15 @@ void MazeWindow::render() {
 	player_line[1].y = player_line[0].y + int(30 * sin(_player.dir()));
 	SDL_SetRenderDrawColor(_renderer.get(), 200, 200, 96, 255);
 	SDL_RenderDrawLines(_renderer.get(), player_line, 2);
-
 	//игрок
-	SDL_Rect player_rect {
-		int(_player.x() * 20 - 5),
-		int(_player.y() * 20 - 5),
-		11, 11 };
+	SDL_Rect player_rect { int(_player.x() * 20 - 5), int(_player.y() * 20 - 5),
+			11, 11 };
 	SDL_SetRenderDrawColor(_renderer.get(), 255, 127, 127, 255);
 	SDL_RenderFillRect(_renderer.get(), &player_rect);
+}
+
+void MazeWindow::render() {
+	draw_minimap(127);
 }
 
 void MazeWindow::handle_keys(const Uint8 *keys) {
