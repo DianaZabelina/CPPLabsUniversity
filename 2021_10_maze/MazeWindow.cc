@@ -1,10 +1,17 @@
 #include "MazeWindow.h"
-#include <cmath>
+#include "utils.h"
+#include <iostream>
+#include <ctime>
 
 MazeWindow::MazeWindow()
 : Window(WINDOW_WIDTH, WINDOW_HEIGHT) {
 	SDL_SetWindowTitle(_window.get(), "Maze Window");
-	_map = std::make_shared<Map>("map.txt");
+	//_map = std::make_shared<Map>("map.txt");
+	time_t now = time(0);
+	tm *ltm = localtime(&now);
+	int m = ltm->tm_min;
+	if (m % 2 == 0) set_map(std::make_shared<Map>("map2.txt"));
+	else set_map(std::make_shared<Map>("map1.txt"));
 	_player.spawn(_map);
 
 	SDL_SetRenderDrawBlendMode(_renderer.get(), SDL_BLENDMODE_BLEND);
@@ -57,7 +64,6 @@ void MazeWindow::draw_col_textured(int col, int hh, Texture &tex, double tx) {
 static constexpr double EPSILON = 0.0001;
 
 void MazeWindow::draw_view() {
-	double Pi = acos(-1.0);
 	double alpha = _player.dir();
 	double px = _player.x();
 	double py = _player.y();

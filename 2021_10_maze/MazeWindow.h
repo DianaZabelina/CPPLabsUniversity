@@ -30,6 +30,10 @@ public:
 
 	virtual void render() override;
 	virtual void handle_keys(const Uint8 *keys) override;
+
+	void set_map(const std::shared_ptr<Map> &map) {
+		_map = map;
+	}
 };
 
 #endif /* MAZEWINDOW_H_ */
