@@ -1,4 +1,5 @@
 #include "MazeWindow.h"
+#include <cmath>
 
 MazeWindow::MazeWindow()
 : Window(WINDOW_WIDTH, WINDOW_HEIGHT) {
@@ -30,13 +31,138 @@ void MazeWindow::draw_minimap(Uint8 alpha) {
 	SDL_SetRenderDrawColor(_renderer.get(), 200, 200, 96, 255);
 	SDL_RenderDrawLines(_renderer.get(), player_line, 2);
 	//игрок
-	SDL_Rect player_rect { int(_player.x() * 20 - 5), int(_player.y() * 20 - 5),
-			11, 11 };
+	SDL_Rect player_rect { int(_player.x() * 20 - 5), int(_player.y() * 20 - 5), 11, 11 };
 	SDL_SetRenderDrawColor(_renderer.get(), 255, 127, 127, 255);
 	SDL_RenderFillRect(_renderer.get(), &player_rect);
 }
 
+void MazeWindow::cast_ray(double &rx, double &ry, double dx, double dy) {
+	do {
+		rx += dx;
+		ry += dy;
+	} while (not _map->is_wall(rx, ry));
+}
+
+void MazeWindow::draw_col(int col, int hh) {
+	SDL_SetRenderDrawColor(_renderer.get(), 32, 32, 192, 255);
+	SDL_RenderDrawLine(_renderer.get(),
+			col, height() / 2 - hh / 2,
+			col, height() / 2 + hh / 2);
+}
+
+void MazeWindow::draw_col_textured(int col, int hh, Texture &tex, double tx) {
+	tex.draw_col(col, height() / 2, hh, tx);
+}
+
+static constexpr double EPSILON = 0.0001;
+
+void MazeWindow::draw_view() {
+	double Pi = acos(-1.0);
+	double alpha = _player.dir();
+	double px = _player.x();
+	double py = _player.y();
+	double beta, gamma;
+	double fov = Pi / 3;
+	double Ds = _width / 2.0 / tan(fov / 2.0);
+	double tx, txv, txh;
+
+	SDL_Rect sky_rect { 0, 0, width(), height() / 2 };
+	SDL_Rect floor_rect { 0, height() / 2, width(), height() / 2 };
+	SDL_SetRenderDrawColor(_renderer.get(), 64, 128, 192, 255);
+	SDL_RenderFillRect(_renderer.get(), &sky_rect);
+	SDL_SetRenderDrawColor(_renderer.get(), 64, 64, 64, 255);
+	SDL_RenderFillRect(_renderer.get(), &floor_rect);
+
+	for (int col = 0; col < width(); col++){
+		double rx, ry, dx, dy;
+		double Dh, Dv, Dw;
+		int h;
+		int ctv, cth, ct = 1;
+		gamma = atan2(double(col - width() / 2), Ds);
+		beta = alpha + gamma;
+		//вертикальное
+		if (cos(beta) > EPSILON) {
+			dx = 1;
+			dy = tan(beta);
+			rx = floor(px) + EPSILON;
+			ry = py - (px - rx) * dy;
+			cast_ray(rx, ry, dx, dy);
+			Dv = hypot(rx - px, ry - py);
+			txv = ry - floor(ry);
+			ctv = _map->cell_type(rx,ry);
+		}
+		else if (cos(beta) < -EPSILON) {
+			dx = -1;
+			dy = tan(-beta);
+			rx = ceil(px) - EPSILON;
+			ry = py - (rx - px) * dy;
+			cast_ray(rx, ry, dx, dy);
+			Dv = hypot(rx - px, ry - py);
+			txv = ry - floor(ry);
+			ctv = _map->cell_type(rx,ry);
+		}
+		else {
+			Dv = INFINITY;
+			txv = 0.0;
+			ctv = 1;
+		}
+		//горизонтальное
+		if (sin(beta) > EPSILON) {
+			dy = 1;
+			dx = 1 / tan(beta);
+			ry = floor(py) + EPSILON;
+			rx = px - (py - ry) * dx;
+			cast_ray(rx, ry, dx, dy);
+			Dh = hypot(rx - px, ry - py);
+			txh = rx - floor(rx);
+			cth = _map->cell_type(rx,ry);
+		}
+		else if (sin(beta) < -EPSILON) {
+			dy = -1;
+			dx = 1 / tan(-beta);
+			ry = ceil(py) - EPSILON;
+			rx = px - (ry - py) * dx;
+			cast_ray(rx, ry, dx, dy);
+			Dh = hypot(rx - px, ry - py);
+			txh = rx - floor(rx);
+			Dw = Dh;
+			cth = _map->cell_type(rx, ry);
+		}
+		else {
+			Dh = INFINITY;
+			txh = 0.0;
+			cth = 1;
+		}
+		if (Dv < Dh) {
+			Dw = Dv;
+			tx = txv;
+			ct = ctv;
+		}
+		else {
+			Dw = Dh;
+			tx = txh;
+			ct = cth;
+		}
+		h = int(Ds / Dw / cos(gamma));
+		//draw_col(col, h);
+		//draw_col_textured(col, h, _wall1, tx);
+		switch (ct) {
+		case 2:{
+			draw_col_textured(col, h, _wall2, tx);
+			break;
+		}
+		case 3: {
+			draw_col_textured(col, h, _wall3, tx);
+			break;
+		}
+		default:
+			draw_col_textured(col, h, _wall1, tx);
+		}
+	}
+}
+
 void MazeWindow::render() {
+	draw_view();
 	draw_minimap(127);
 }
 

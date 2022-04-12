@@ -28,6 +28,15 @@ public:
 	bool is_wall(double x, double y) {
 		return is_wall(int(floor(x)), int(floor(y)));
 	}
+
+	int cell_type(int x, int y) {
+		if (x < 0 or x >= _width or y < 0 or y >= _height)
+			return 1;
+		return _data[y * _width + x];
+	}
+	double cell_type(double x, double y) {
+		return cell_type(int(floor(x)), int(floor(y)));
+	}
 };
 
 #endif /* MAP_H_ */

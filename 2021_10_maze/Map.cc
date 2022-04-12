@@ -1,10 +1,3 @@
-/*
- * Map.cc
- *
- *  Created on: 7 апр. 2022 г.
- *      Author: app-pro
- */
-
 #include "Map.h"
 #include <fstream>
 #include <sstream>
@@ -13,7 +6,7 @@ Map::Map(const char *filename) {
 	std::ifstream file { filename };
 	if (not file.good())
 		throw std::runtime_error(
-				std::string("Не удалось открыть файл карты") +
+				std::string("Не удалось открыть файл карты ") +
 				std::string(filename));
 
 	std::string line;
@@ -22,12 +15,13 @@ Map::Map(const char *filename) {
 
 	params >> _width >> _height >> _start_x >> _start_y >> _start_a;
 	_data.resize(_width * _height);
-	for (int i = 0; i < _height; ++i) {
+	for (int i = 0; i < _height; i++) {
 		std::getline(file, line);
-		for (int j = 0; j < _width; ++j) {
+		for (int j = 0; j < _width; j++) {
 			int cell = 1;
-			if (line[j] == ' ')
-				cell = 0;
+			if (line[j] == ' ') cell = 0;
+			if (line[j] == '@') cell = 2;
+			if (line[j] == '&') cell = 3;
 			_data[i * _width + j] = cell;
 		}
 	}

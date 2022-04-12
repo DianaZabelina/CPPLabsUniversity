@@ -30,6 +30,7 @@ public:
 	double dir() const { return _dir; }
 	double x() const { return _x; }
 	double y() const { return _y; }
+	double fov() const { return _fov; }
 };
 
 #endif /* PLAYER_H_ */
