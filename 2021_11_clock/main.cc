@@ -13,12 +13,12 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_main.h>
 
-#include "Window.h"
+#include "MyWindow.h"
 
-int main() {
+int main(int, char **) {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	try {
-		Window w;
+		MyWindow w;
 		w.main_loop();
 	} catch (const std::exception &e) {
 		std::cerr << "Произошла ошибка:\n" <<
