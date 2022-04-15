@@ -58,7 +58,7 @@ void MazeWindow::draw_col(int col, int hh) {
 }
 
 void MazeWindow::draw_col_textured(int col, int hh, Texture &tex, double tx) {
-	tex.draw_col(col, height() / 2, hh, tx);
+	tex.draw_col(col, height() / 2 - hh / 2, hh, tx);
 }
 
 static constexpr double EPSILON = 0.0001;
