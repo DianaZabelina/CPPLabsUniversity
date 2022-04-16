@@ -20,17 +20,26 @@ public:
 	using NormalsType = std::vector<glm::vec3>;
 	using TexCoordsType = std::vector<std::vector<glm::vec2>>;
 
+	using VerticesTypePtr = std::shared_ptr<VerticesType>;
+	using FacesTypePtr = std::shared_ptr<FacesType>;
+	using NormalsTypePtr = std::shared_ptr<NormalsType>;
+	using TexCoordsTypePtr = std::shared_ptr<TexCoordsType>;
+
 protected:
-	VerticesType _vertices;
-	FacesType _faces;
-	NormalsType _normals;
-	TexCoordsType _texcoords;
+	VerticesTypePtr _vertices;
+	FacesTypePtr _faces;
+	NormalsTypePtr _normals;
+	TexCoordsTypePtr _texcoords;
+
+private:
+	void read_model_line(std::ifstream &file, std::string &buffer);
 
 public:
-	Model(	VerticesType vertices,
-			FacesType faces,
-			NormalsType normals,
-			TexCoordsType tex_coords);
+	Model(	VerticesTypePtr vertices,
+			FacesTypePtr faces,
+			NormalsTypePtr normals,
+			TexCoordsTypePtr tex_coords);
+	Model(const char *filename);
 	virtual ~Model() = default;
 
 	void draw();

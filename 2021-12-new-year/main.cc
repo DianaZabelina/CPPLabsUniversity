@@ -1,15 +1,15 @@
 #include <iostream>
 #include <stdexcept>
 
-#include <SDL2/SDl.h>
+#include <SDL2/SDL.h>
 #include <SDL2/SDL_main.h>
 
-#include "Window.h"
+#include "HouseWindow.h"
 
 int main(int, char **) {
 	SDL_Init(SDL_INIT_EVERYTHING);
 	try {
-		Window w;
+		HouseWindow w;
 		w.main_loop();
 	} catch (const std::exception &e) {
 		std::cerr <<

@@ -2,8 +2,12 @@
 #define HOUSEWINDOW_H_
 
 #include "Window.h"
+#include "Model.h"
 
 class HouseWindow: public Window {
+private:
+	Model _house_model;
+	double _angle = 0.0;
 public:
 	static constexpr int WINDOW_WIDTH = 1280;
 	static constexpr int WINDOW_HEIGHT = 640;
