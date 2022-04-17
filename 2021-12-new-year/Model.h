@@ -20,6 +20,12 @@ public:
 	using NormalsType = std::vector<glm::vec3>;
 	using TexCoordsType = std::vector<std::vector<glm::vec2>>;
 
+	using AmbientColorType = std::vector<glm::vec4>;
+	using DiffuseColorType = std::vector<glm::vec4>;
+	using SpecularColorType = std::vector<glm::vec4>;
+	using EmissionColorType = std::vector<glm::vec4>;
+	using ShininessType = std::vector<GLfloat>;
+
 	using VerticesTypePtr = std::shared_ptr<VerticesType>;
 	using FacesTypePtr = std::shared_ptr<FacesType>;
 	using NormalsTypePtr = std::shared_ptr<NormalsType>;

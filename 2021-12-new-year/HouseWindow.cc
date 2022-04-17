@@ -17,13 +17,19 @@ void HouseWindow::render() {
 	gluLookAt(	6.0, 6.0, 4.5,
 				0.0, 0.0, 1.5,
 				0.0, 0.0, 1.0);
+	glRotated(_angle, 0.0, 0.0, 1.0);
+	Texture::enable();
+	_house_texture.bind();
 	_house_model.draw();
 }
 
 void HouseWindow::setupGL() {
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_TEXTURE);
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
+
+	glClearColor(0.1f, 0.25f, 0.45f, 1.0f);
 
 	double aspect_ratio = double(width()) / double(height());
 	glMatrixMode(GL_PROJECTION);
